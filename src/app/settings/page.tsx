@@ -57,7 +57,7 @@ export default function Page() {
               <input
                 id="baseURL"
                 type="text"
-                placeholder="APIのURL"
+                placeholder="APIのURL (例: http://localhost:1234/v1)"
                 className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={baseURL}
                 onChange={(e) => setBaseURL(e.target.value)}
@@ -83,7 +83,7 @@ export default function Page() {
               <input
                 id="model"
                 type="text"
-                placeholder="使用モデル"
+                placeholder="使用モデル (例: gemma-3-4b-it-qat, gpt-3.5-turbo)"
                 className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
