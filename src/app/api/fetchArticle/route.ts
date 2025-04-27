@@ -24,11 +24,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        // title: article.title,
-        // content: article.content,
-        // image: article.image,
-        // source: article.source,
+        title: article.title,
+        source: article.source,
+        favicon: article.favicon,
+        content: article.content,
         cleanedContent,
+        url: article.url,
+        publishedAt: article.published,
+        ttr: article.ttr,
       },
       { status: 200 }
     );
