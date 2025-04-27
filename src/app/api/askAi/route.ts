@@ -2,39 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const body = await req.json();
-  const { baseURL, apiKey, article, model } = body;
-
-  if (!baseURL) {
-    return NextResponse.json({ error: "baseURLが必要です" }, { status: 400 });
-  }
-  if (!apiKey) {
-    return NextResponse.json({ error: "apiKeyが必要です" }, { status: 400 });
-  }
-  if (!article) {
-    return NextResponse.json(
-      { error: "記事の内容が必要です" },
-      { status: 400 }
-    );
-  }
-  if (!model) {
-    return NextResponse.json({ error: "モデルが必要です" }, { status: 400 });
-  }
-
-  const client = new OpenAI({
-    baseURL,
-    apiKey,
-  });
-
-  const response = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: "system",
-        content: `
-Always response in 日本語
+  let systemPrompt = `
 あなたは、与えられた技術系の記事をわかりやすく噛み砕いて伝えるアシスタントです。
 相手は、個人開発をしている駆け出しエンジニアで、技術に関心はありますが、あまり深く考えたくありません。
+与えられた記事を以下の出力例に従ってまとめてください。他のことについては考えないでください。
 
 以下の本文を読んで、以下の3点を箇条書きでまとめてください：
 
@@ -55,7 +26,44 @@ Always response in 日本語
 😎 一言まとめ：
 「無料でAPI公開？Cloudflare Workersでよくね？」
 +++
-        `,
+`;
+
+  const body = await req.json();
+  const { baseURL, apiKey, article, prompt, model } = body;
+
+  if (!baseURL) {
+    return NextResponse.json({ error: "baseURLが必要です" }, { status: 400 });
+  }
+  if (!apiKey) {
+    return NextResponse.json({ error: "apiKeyが必要です" }, { status: 400 });
+  }
+  if (!article) {
+    return NextResponse.json(
+      { error: "記事の内容が必要です" },
+      { status: 400 }
+    );
+  }
+  if (!model) {
+    return NextResponse.json({ error: "モデルが必要です" }, { status: 400 });
+  }
+  if (prompt) {
+    systemPrompt = prompt;
+  }
+
+  const client = new OpenAI({
+    baseURL,
+    apiKey,
+  });
+
+  const response = await client.chat.completions.create({
+    model,
+    messages: [
+      {
+        role: "system",
+        content: `
+Always response in 日本語.
+${systemPrompt}
+`,
       },
       {
         role: "user",

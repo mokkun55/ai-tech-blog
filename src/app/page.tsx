@@ -8,7 +8,7 @@ import {
   FaSearch,
   FaGithub,
 } from "react-icons/fa";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import toast from "react-hot-toast";
 import { type ArticleType } from "@/types/articleType";
 
@@ -17,6 +17,24 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [article, setArticle] = useState<ArticleType | undefined>();
   const [summary, setSummary] = useState<string | undefined>();
+
+  const [baseURL, setBaseURL] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
+  const [prompt, setPrompt] = useState<string>("");
+  const [model, setModel] = useState<string>("");
+
+  // ローカルストレージから設定を読み込む
+  useEffect(() => {
+    const loadedBaseURL = localStorage.getItem("baseURL");
+    const loadedApiKey = localStorage.getItem("apiKey");
+    const loadedPrompt = localStorage.getItem("prompt");
+    const loadedModel = localStorage.getItem("model");
+
+    if (loadedBaseURL) setBaseURL(loadedBaseURL);
+    if (loadedApiKey) setApiKey(loadedApiKey);
+    if (loadedPrompt) setPrompt(loadedPrompt);
+    if (loadedModel) setModel(loadedModel);
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,10 +60,11 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        baseURL: "http://localhost:1234/v1",
-        apiKey: "lm-studio",
+        baseURL,
+        apiKey,
         article: article.cleanedContent,
-        model: "gemma-3-4b-it-qat",
+        model,
+        prompt: prompt || "",
       }),
     });
     if (!summaryRes.ok) {
