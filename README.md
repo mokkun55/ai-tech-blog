@@ -1,34 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TechSum AI - 技術記事の AI 要約サービス
 
-## Getting Started
+TechSum AI は、技術記事を簡単に要約してくれる Web アプリケーションです。Qiita や Zenn などの技術記事の URL を入力するだけで、AI がその内容を分析し、要点を抽出してわかりやすく要約します。
 
-First, run the development server:
+## 技術スタック
+
+- **フロントエンド**: Next.js 15.3.1 (React 19)
+- **スタイリング**: Tailwind CSS 4.1.4
+- **API 処理**: [OpenAI API 互換インターフェース](https://platform.openai.com/docs/api-reference/debugging-requests)
+- **記事抽出**: [article-extractor](https://github.com/extractus/article-extractor)
+- **UI 通知**: react-hot-toast
+- **パッケージ管理**: pnpm
+
+## 機能
+
+- 📝 URL から技術記事の内容を自動抽出
+- 🤖 AI による記事の要約と重要ポイントの抽出
+- 🔍 記事の要点を簡潔にまとめて表示
+- 📋 要約内容のコピー機能
+- ⚙️ カスタム API およびプロンプト設定
+
+## 使い方
+
+1. ホーム画面で Qiita や Zenn などの技術記事の URL を入力フィールドに貼り付けます
+2. 「要約する」ボタンをクリックします
+3. AI が記事を解析し、要約が表示されるまで待ちます
+4. 要約結果が表示されたら、内容を確認します
+5. 「要約をコピーする」ボタンで内容をクリップボードにコピーできます
+6. 「元記事を読む」リンクで元の記事にアクセスできます
+
+### 設定カスタマイズ
+
+画面右上の設定アイコンをクリックして、以下の設定を変更できます：
+
+- **API URL**: 使用する API のエンドポイント URL
+- **API キー**: 認証に使用する API キー
+- **使用モデル**: 要約に使用する AI モデルの名前
+- **システムプロンプト**: AI への指示プロンプト（空欄の場合はデフォルト設定が使用されます）
+
+## 開発方法
+
+### 依存関係のインストール
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 開発サーバーの起動
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-## Learn More
+## API 設定
 
-To learn more about Next.js, take a look at the following resources:
+このアプリケーションは [OpenAI API 互換のエンドポイント](https://platform.openai.com/docs/api-reference/debugging-requests)を使用します。
+初期設定では、lm studioでローカルLLMを起動して使用するのを想定しています。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+それ以外で使用する場合は以下の設定が必要です：
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. 設定画面で「API URL」を設定
+   1. openaiのapiを使う場合: `https://api.openai.com/v1`
+2. 「API キー」を設定
+3. 「使用モデル」を設定（例：gpt-3.5-turbo, gemma-3-4b-it-qat など）
 
-## Deploy on Vercel
+設定はブラウザのローカルストレージに保存されます。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## デフォルトプロンプト
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+システムプロンプトを空欄にすると、デフォルトのプロンプトが使用されます。デフォルトプロンプトは以下の出力を生成します：
+
+```
+あなたは、与えられた技術系の記事をわかりやすく噛み砕いて伝えるアシスタントです。
+相手は、個人開発をしている駆け出しエンジニアで、技術に関心はありますが、あまり深く考えたくありません。
+与えられた記事を以下の出力例に従ってまとめてください。他のことについては考えないでください。
+
+以下の本文を読んで、以下の3点を箇条書きでまとめてください：
+
+1. この内容でいちばん大事なこと（初心者向けに）
+2. 「個人開発者的に使えそう」と思えるポイント
+3. 読んだあとに思わずつぶやきたくなるような一言（カジュアルな雰囲気）
+
++++ 出力例 +++
+🧠 この記事のポイント
+- Cloudflare Workers を使えば、Node.js不要でサーバレスAPIが作れるよ！
+- 個人開発なら、APIを無料でホストできるからコスパ最強。
+- あとでVercelとの比較もあるから読む価値あり。
+
+💡 個人開発者的にはここ注目！
+- 無料枠でも1日10万リクエストOK
+- GitHubでサクッとデプロイできる
+
+😎 一言まとめ：
+「無料でAPI公開？Cloudflare Workersでよくね？」
++++
+```
+
+## ライセンス
+
+このプロジェクトは個人的な学習・開発目的で作成されています。
