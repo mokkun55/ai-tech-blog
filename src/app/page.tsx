@@ -127,7 +127,7 @@ export default function Home() {
                     type="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://qiita.com/... または https://zenn.dev/..."
+                    placeholder="技術記事のURLを入力"
                     className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
                     required
                   />
@@ -171,7 +171,7 @@ export default function Home() {
                 {article?.title}
               </a>
 
-              <p className="text-xl p-4">{summary}</p>
+              <p className="text-xl p-4 whitespace-pre-wrap">{summary}</p>
 
               <div className="mt-2 border-t-1 border-border pt-2 text-end">
                 <a
@@ -190,9 +190,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <p className="text-center mt-16">
-              URLを入力して要約を取得してください
-            </p>
+            <></>
           )}
         </div>
       </div>
