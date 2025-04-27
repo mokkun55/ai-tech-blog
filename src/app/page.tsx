@@ -136,7 +136,7 @@ export default function Home() {
             </Link>
 
             {/* TODO ロード中はプログレス */}
-            <p className="text-xl mt-4 p-4">
+            <p className="text-xl p-4">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum
               commodi accusamus, aliquid magnam beatae odit quibusdam dolores,
               aspernatur animi veniam nobis nemo aperiam eos enim porro
