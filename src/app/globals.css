@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme {
+  /* 基本カラー */
+  --color-primary: #3b82f6; /* メインカラー：青 */
+  --color-primary-light: #60a5fa; /* 明るい青 */
+  --color-primary-dark: #2563eb; /* 暗い青 */
+
+  --color-accent: #38bdf8; /* アクセントカラー：アクアブルー */
+  --color-accent-light: #7dd3fc; /* 明るいアクアブルー */
+  --color-accent-dark: #0ea5e9; /* 暗いアクアブルー */
+
+  /* 機能的カラー */
+  --color-success: #10b981; /* 成功メッセージ用の緑 */
+  --color-error: #ef4444; /* エラーメッセージ用の赤 */
+  --color-warning: #f59e0b; /* 警告メッセージ用の黄色 */
+  --color-info: #6366f1; /* 情報メッセージ用の紫 */
+
+  /* 背景 */
+  --color-bg: #ffffff; 
+  --color-bg-secondary: #f3f4f6; 
+
+  /* テキスト */
+  --color-text: #1f2937;
+  --color-text-secondary: #4b5563; 
+
+  /* ボーダー */
+  --color-border: #e5e7eb; 
+}
