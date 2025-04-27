@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [url, setUrl] = useState<string | undefined>();
@@ -33,6 +34,7 @@ export default function Home() {
   const handleCopy = async () => {
     // TODO 今は仮置き
     await global.navigator.clipboard.writeText("要約された内容");
+    toast.success("コピーしました！");
   };
 
   return (
