@@ -1,25 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  baseURL: process.env.OPENAI_API_BASE_URL,
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const body = await req.json();
-  const { article, model } = body;
+  const { baseURL, apiKey, article, model } = body;
 
+  if (!baseURL) {
+    return NextResponse.json({ error: "baseURLが必要です" }, { status: 400 });
+  }
+  if (!apiKey) {
+    return NextResponse.json({ error: "apiKeyが必要です" }, { status: 400 });
+  }
   if (!article) {
     return NextResponse.json(
       { error: "記事の内容が必要です" },
       { status: 400 }
     );
   }
-
   if (!model) {
     return NextResponse.json({ error: "モデルが必要です" }, { status: 400 });
   }
+
+  const client = new OpenAI({
+    baseURL,
+    apiKey,
+  });
 
   const response = await client.chat.completions.create({
     model,

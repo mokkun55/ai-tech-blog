@@ -42,6 +42,8 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        baseURL: "http://localhost:1234/v1",
+        apiKey: "lm-studio",
         article: article.cleanedContent,
         model: "gemma-3-4b-it-qat",
       }),
