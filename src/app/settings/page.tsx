@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Header } from "../components/layout/header/page";
+import { Header } from "../components/layout/header/Header";
 
 export default function Page() {
   const [baseURL, setBaseURL] = useState<string>("http://localhost:1234/v1");

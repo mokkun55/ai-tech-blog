@@ -1,6 +1,6 @@
 "use client";
 
-import { Header } from "./components/layout/header/page";
+import { Header } from "./components/layout/header/Header";
 import {
   FaBolt,
   FaCheckCircle,
