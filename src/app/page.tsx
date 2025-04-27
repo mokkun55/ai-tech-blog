@@ -39,6 +39,10 @@ export default function Home() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!url) return;
+
+    // 新しい要約開始時にリセット
+    setArticle(undefined);
+    setSummary(undefined);
     setLoading(true);
 
     // 与えられたurlから記事の内容を取得する
@@ -52,6 +56,7 @@ export default function Home() {
     }
     const article = await articleRes.json();
     setArticle(article);
+    toast.success("記事情報の取得に成功しました");
 
     // 記事の内容をLLMで要約する
     const summaryRes = await fetch("/api/askAi", {
