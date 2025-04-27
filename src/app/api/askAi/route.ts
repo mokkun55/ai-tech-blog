@@ -6,11 +6,20 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const model = "gemma-3-4b-it-qat";
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const body = await req.json();
-  const article = body.article;
+  const { article, model } = body;
+
+  if (!article) {
+    return NextResponse.json(
+      { error: "記事の内容が必要です" },
+      { status: 400 }
+    );
+  }
+
+  if (!model) {
+    return NextResponse.json({ error: "モデルが必要です" }, { status: 400 });
+  }
 
   const response = await client.chat.completions.create({
     model,
