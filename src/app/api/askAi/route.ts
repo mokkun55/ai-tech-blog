@@ -28,7 +28,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         role: "system",
         content: `
 Always response in 日本語
-あなたは、技術系の記事をわかりやすく噛み砕いて伝えるアシスタントです。
+あなたは、与えられた技術系の記事をわかりやすく噛み砕いて伝えるアシスタントです。
 相手は、個人開発をしている駆け出しエンジニアで、技術に関心はありますが、あまり深く考えたくありません。
 
 以下の本文を読んで、以下の3点を箇条書きでまとめてください：
@@ -50,14 +50,11 @@ Always response in 日本語
 😎 一言まとめ：
 「無料でAPI公開？Cloudflare Workersでよくね？」
 +++
-
-=== ここから本文 ===
-${article}
         `,
       },
       {
         role: "user",
-        content: `${article}`,
+        content: `次の記事を読んでまとめてください。 ${article}`,
       },
     ],
   });
