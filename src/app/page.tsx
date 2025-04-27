@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { type ArticleType } from "@/types/articleType";
 
 export default function Home() {
-  const [url, setUrl] = useState<string | undefined>();
+  const [url, setUrl] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [article, setArticle] = useState<ArticleType | undefined>();
   const [summary, setSummary] = useState<string | undefined>();

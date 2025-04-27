@@ -14,8 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>
-        <Toaster position="bottom-right"/>
+      <body suppressHydrationWarning={true}>
+        <Toaster position="bottom-right" />
         {children}
       </body>
     </html>
