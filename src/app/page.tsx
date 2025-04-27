@@ -7,33 +7,63 @@ import {
   FaLayerGroup,
   FaSearch,
   FaGithub,
-  FaTwitter,
 } from "react-icons/fa";
 import { useState, FormEvent } from "react";
-import Link from "next/link";
 import toast from "react-hot-toast";
+import { type ArticleType } from "@/types/articleType";
 
 export default function Home() {
   const [url, setUrl] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const [article, setArticle] = useState<ArticleType | undefined>();
+  const [summary, setSummary] = useState<string | undefined>();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!url) return;
-
     setLoading(true);
-    // ここに実際のAPI呼び出しロジックを追加
-    console.log("Summarizing URL:", url);
 
-    // モックのためのタイマー（実際の実装では削除）
-    setTimeout(() => {
+    // 与えられたurlから記事の内容を取得する
+    const articleRes = await fetch(`/api/fetchArticle?url=${url}`, {
+      method: "POST",
+    });
+    if (!articleRes.ok) {
+      toast.error("記事の取得に失敗しました");
       setLoading(false);
-    }, 2000);
+      return;
+    }
+    const article = await articleRes.json();
+    setArticle(article);
+
+    // 記事の内容をLLMで要約する
+    const summaryRes = await fetch("/api/askAi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        article: article.cleanedContent,
+        model: "gemma-3-4b-it-qat",
+      }),
+    });
+    if (!summaryRes.ok) {
+      toast.error("要約の取得に失敗しました");
+      setLoading(false);
+      return;
+    }
+    const summaryJson = await summaryRes.json();
+    console.log("Summarized content:", summaryJson);
+    setSummary(summaryJson.response);
+    toast.success("要約の取得に成功しました");
+    setLoading(false);
   };
 
   const handleCopy = async () => {
-    // TODO 今は仮置き
-    await global.navigator.clipboard.writeText("要約された内容");
+    if (!summary) {
+      toast.error("データがありません");
+      return;
+    }
+    await global.navigator.clipboard.writeText(summary || "");
     toast.success("コピーしました！");
   };
 
@@ -127,55 +157,43 @@ export default function Home() {
             </div>
           )}
 
-          {/* 出力結果 */}
-          {/* TODO あとで三項演算する */}
+          {/* 要約結果 */}
+          {summary && article ? (
+            <div className="container mx-auto flex flex-col my-16 bg-bg-secondary rounded-2xl p-4 border border-border shadow-lg">
+              <p className="text-end">{article?.source}</p>
 
-          <div className="container mx-auto flex flex-col my-16 bg-bg-secondary rounded-2xl p-4 border border-border shadow-lg">
-            <p className="text-end">source</p>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-3xl font-bold text-center"
+              >
+                {article?.title}
+              </a>
 
-            <Link href="" className="text-3xl font-bold text-center">
-              タイトル
-            </Link>
+              <p className="text-xl p-4">{summary}</p>
 
-            {/* TODO ロード中はプログレス */}
-            <p className="text-xl p-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum
-              commodi accusamus, aliquid magnam beatae odit quibusdam dolores,
-              aspernatur animi veniam nobis nemo aperiam eos enim porro
-              similique nesciunt libero temporibus at non placeat! Adipisci
-              maxime dolorem cum, eos quod corporis voluptatem ea repellat qui
-              placeat inventore voluptatum optio repellendus nobis distinctio
-              officiis enim ab quam, eligendi molestiae? Animi dolores labore
-              doloremque voluptate ut cumque rem optio et corporis distinctio
-              neque corrupti in dolorem ab reiciendis, sequi quia alias aperiam
-              accusantium aut molestiae! Tempore, officia eligendi doloremque ab
-              harum dolor reprehenderit dolorum provident sapiente dicta iste
-              ducimus molestias neque minus nemo nisi cumque, facere
-              voluptatibus odit. Doloribus ipsum nulla ipsa voluptate. Ipsam
-              repudiandae eveniet reiciendis odio cupiditate facilis porro
-              quibusdam minus id, assumenda, laborum expedita! Nihil autem
-              tempora accusantium aliquam deleniti reprehenderit fugit iusto
-              ipsam nam quisquam quas sequi, quos ullam! Consectetur explicabo
-              vero iure nostrum autem sunt veritatis adipisci hic nisi
-              voluptatem a sit sed corrupti, natus optio earum fugit. Doloremque
-              facilis illum, assumenda excepturi optio ut praesentium deleniti
-              at corrupti quia voluptatem dicta vel vitae distinctio sit velit
-              labore veritatis nemo culpa dolorum numquam ea tempora qui
-              laborum! Eligendi eum reprehenderit a ab nobis tempora itaque
-              suscipit mollitia temporibus!
-            </p>
-
-            <div className="mt-2 border-t-1 border-border pt-2 text-end">
-              <Link href={""} className="mr-4">
-                元記事を読む
-              </Link>
-              <button onClick={handleCopy} className="cursor-copy">
-                要約をコピーする
-              </button>
-              {/* TODO 共有機能は時間があれば実装 */}
-              {/* <p>共有</p> */}
+              <div className="mt-2 border-t-1 border-border pt-2 text-end">
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={article.url}
+                  className="mr-4"
+                >
+                  元記事を読む
+                </a>
+                <button onClick={handleCopy} className="cursor-copy">
+                  要約をコピーする
+                </button>
+                {/* TODO 共有機能は時間があれば実装 */}
+                {/* <p>共有</p> */}
+              </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-center mt-16">
+              URLを入力して要約を取得してください
+            </p>
+          )}
         </div>
       </div>
 
@@ -184,7 +202,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <div className="font-bold text-xl mb-2">TechSum AI</div>
+              <p className="font-bold text-xl mb-2">TechSum AI</p>
               <p className="text-text-light-secondary text-sm">
                 技術記事のAI要約サービス &copy;{new Date().getFullYear()}
               </p>
@@ -193,20 +211,24 @@ export default function Home() {
             <div className="flex flex-col items-center md:items-end">
               <div className="flex space-x-4 mb-4">
                 <a
-                  href="#"
-                  className="text-text-light-secondary hover:text-primary transition"
-                  aria-label="Twitter"
-                >
-                  <FaTwitter size={20} />
-                </a>
-                <a
-                  href="#"
+                  href="https://github.com/mokkun55/ai-tech-blog"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-text-light-secondary hover:text-primary transition"
                   aria-label="GitHub"
                 >
                   <FaGithub size={20} />
                 </a>
               </div>
+              <p>
+                Create by{" "}
+                <a
+                  href="https://mokkun55.com"
+                  className="underline text-accent"
+                >
+                  mokkun
+                </a>
+              </p>
             </div>
           </div>
         </div>
